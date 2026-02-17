@@ -1,4 +1,4 @@
-import { animate, drawLine, resizeCanvas, state } from "./canvas";
+import { animate, resizeCanvas, state } from "./canvas";
 import { CanvasObject, isPointInObject, Point } from "./shapes/shapes";
 
 function init(): void {
@@ -20,6 +20,7 @@ function init(): void {
     for (let i = 0; i < state.length; i++) {
       if (isPointInObject(clickPos, state[i])) {
         selectedObject = state[i];
+        console.log("selected object: ", selectedObject)
 
         // Difference between obj top-left corner and cursor pos
         dragOffset = { 
