@@ -1,28 +1,32 @@
-import { CanvasObject, Point, Shape } from "./shapes/shapes";
+import { CanvasObject, Point, Rectangle, Shape, Square } from "./shapes/shapes";
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
 
-const SNAP_POINT_WIDTH = 10;
-const SNAP_POINT_HEIGHT = 10;
+const SNAP_POINT_SIZE = 10;
 
 export const state: CanvasObject[] = [
   {
     id: "blue",
-    position: { x: 50, y: 200 },
-    shape: { width: 100, height: 100, backgroundColor: "#0400ff" },
+    position: { x: 50, y: 300 },
+    shape: new Rectangle(150, 200, "#0400ff"),
     snappingPoints: [
-      { width: SNAP_POINT_WIDTH, height: SNAP_POINT_HEIGHT, backgroundColor: "#ffffff57" },
-      { width: SNAP_POINT_WIDTH, height: SNAP_POINT_HEIGHT, backgroundColor: "#ffffff57" },
-      { width: SNAP_POINT_WIDTH, height: SNAP_POINT_HEIGHT, backgroundColor: "#ffffff57" },
-      { width: SNAP_POINT_WIDTH, height: SNAP_POINT_HEIGHT, backgroundColor: "#ffffff57" },
+      new Square(SNAP_POINT_SIZE, "#ffffff57"),
+      new Square(SNAP_POINT_SIZE, "#ffffff57"),
+      new Square(SNAP_POINT_SIZE, "#ffffff57"),
+      new Square(SNAP_POINT_SIZE, "#ffffff57"),
     ]
   },
   {
     id: "red",
     position: { x: 50, y: 50 },
-    shape: { width: 100, height: 100, backgroundColor: "#ff0000" },
-    snappingPoints: []
+    shape: new Square(100, "#ff0000"),
+    snappingPoints: [
+      new Square(SNAP_POINT_SIZE, "#ffffff57"),
+      new Square(SNAP_POINT_SIZE, "#ffffff57"),
+      new Square(SNAP_POINT_SIZE, "#ffffff57"),
+      new Square(SNAP_POINT_SIZE, "#ffffff57"),
+    ]
   }
 ]
 
@@ -31,6 +35,13 @@ export function drawShape(canvas: CanvasRenderingContext2D, shape: Shape, positi
   canvas.fillRect(
     position.x, position.y, 
     shape.width, shape.height);
+}
+
+export function drawLine(canvas: CanvasRenderingContext2D, from: Point, to: Point): void {
+  canvas.moveTo(from.x, from.y);
+  canvas.lineTo(to.x, to.y);
+  canvas.strokeStyle = "#ff0000"
+  canvas.stroke();
 }
 
 export function drawCanvasObject(canvas: CanvasRenderingContext2D, canvasObject: CanvasObject): void {
@@ -87,6 +98,9 @@ export function resizeCanvas(canvas: HTMLCanvasElement): void {
 
 export function animate(ctx: CanvasRenderingContext2D): void {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  
+  drawLine(ctx, { x: 10, y: 10 }, { x: 50, y: 50 })
+  
   state.forEach(obj => {
     drawCanvasObject(ctx, obj);
   });

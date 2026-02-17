@@ -1,9 +1,3 @@
-export type Shape = {
-  width: number;
-  height: number;
-  backgroundColor: HexColor;
-};
-
 export type HexColor = `#${string}`
 
 export type Point = { x: number; y: number }
@@ -22,7 +16,7 @@ export function isPointInObject(point: Point, obj: CanvasObject): boolean {
     && point.y >= position.y && point.y <= position.y + shape.height;
 }
 
-export abstract class ShapeC {
+export abstract class Shape {
   width: number;
   height: number;
   backgroundColor: HexColor;
@@ -34,14 +28,24 @@ export abstract class ShapeC {
   }
 }
 
-export class Rectangle extends ShapeC {
+export class Rectangle extends Shape {
   constructor(width: number, height: number, backgroundColor: HexColor) {
     super(width, height, backgroundColor)
   }
 }
 
-export class Square extends ShapeC {
+export class Square extends Shape {
   constructor(size: number, backgroundColor: HexColor) {
     super(size, size, backgroundColor)
   }
+}
+
+export class Arrow extends Shape {
+  constructor(from: Point, to: Point, backgroundColor: HexColor) {
+    super(0, 0, backgroundColor)
+  }
+}
+
+export class Circle extends Shape {
+  
 }

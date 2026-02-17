@@ -1,4 +1,4 @@
-import { animate, draw, resizeCanvas, state } from "./canvas";
+import { animate, drawLine, resizeCanvas, state } from "./canvas";
 import { CanvasObject, isPointInObject, Point } from "./shapes/shapes";
 
 function init(): void {
