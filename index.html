@@ -10,10 +10,18 @@
       padding: 0;
       box-sizing: border-box;
     }
+
+    #background {
+      background-color: black;
+      width: 100vw;
+      height: 100vh;
+    }
   </style>
 </head>
 <body>
-  <canvas id="main-canvas"></canvas>
+  <div id="background">
+    <canvas id="main-canvas"></canvas>  
+  </div>
   <script type="module" src="/src/index.ts"></script>
 </body>
 </html>
