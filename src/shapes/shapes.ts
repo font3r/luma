@@ -29,11 +29,7 @@ export abstract class Shape {
 
   abstract draw(ctx: CanvasRenderingContext2D, pos: Point): void;
   abstract drawSnappingPoints(ctx: CanvasRenderingContext2D, pos: Point): void;
-  abstract contains(pt: Point, pos: Point): boolean;
-
-  getBoundingBox(pos: Point) {
-    return { x: pos.x, y: pos.y, width: this.width, height: this.height };
-  }
+  abstract contains(point: Point, shapeAnchor: Point): boolean;
 
   getSnapPoints(_pos: Point): Point[] {
     return [];
@@ -77,9 +73,9 @@ export class Rectangle extends Shape {
       SNAP_POINT_SIZE);
   }
 
-  contains(pt: Point, pos: Point): boolean {
-    return pt.x >= pos.x && pt.x <= pos.x + this.width
-      && pt.y >= pos.y && pt.y <= pos.y + this.height;
+  contains(point: Point, shapeAnchor: Point): boolean {
+    return point.x >= shapeAnchor.x && point.x <= shapeAnchor.x + this.width
+      && point.y >= shapeAnchor.y && point.y <= shapeAnchor.y + this.height;
   }
 
   getSnapPoints(pos: Point): Point[] {
@@ -110,9 +106,9 @@ export class Arrow extends Shape {
     this.to = to;
   }
 
-  draw(ctx: CanvasRenderingContext2D, pos: Point): void {
+  draw(ctx: CanvasRenderingContext2D): void {
     ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y);
+    ctx.moveTo(this.from.x, this.from.y);
     ctx.lineTo(this.to.x, this.to.y);
     ctx.strokeStyle = this.backgroundColor;
     ctx.stroke();
@@ -122,30 +118,21 @@ export class Arrow extends Shape {
     
   }
 
-  contains(pt: Point, pos: Point): boolean {
+  contains(point: Point, shapeAnchor: Point): boolean {
     const padding = 6;
+    const { x: x1, y: y1 } = this.from;
+    const { x: x2, y: y2 } = this.to;
+    const { x, y } = point;
 
-    const ax = pos.x + this.from.x;
-    const ay = pos.y + this.from.y;
-    const bx = pos.x + this.to.x;
-    const by = pos.y + this.to.y;
-
-    const dx = bx - ax;
-    const dy = by - ay;
+    const dx = x2 - x1;
+    const dy = y2 - y1;
     const len2 = dx * dx + dy * dy;
-
-    if (len2 === 0) {
-      const ddx = pt.x - ax;
-      const ddy = pt.y - ay;
-      return ddx * ddx + ddy * ddy <= padding * padding;
-    }
-
-    const t = Math.max(0, Math.min(1, ((pt.x - ax) * dx + (pt.y - ay) * dy) / len2));
-    const cx = ax + t * dx;
-    const cy = ay + t * dy;
-    const ddx = pt.x - cx;
-    const ddy = pt.y - cy;
-    return ddx * ddx + ddy * ddy <= padding * padding;
+    const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / len2));
+    const closestX = x1 + t * dx;
+    const closestY = y1 + t * dy;
+    const distX = x - closestX;
+    const distY = y - closestY;
+    return distX * distX + distY * distY <= padding * padding;
   }
 }
 
@@ -164,15 +151,47 @@ export class Circle extends Shape {
     ctx.fill();
   }
 
-  drawSnappingPoints(ctx: CanvasRenderingContext2D): void {
-    
+  drawSnappingPoints(ctx: CanvasRenderingContext2D, pos: Point): void {
+    const points = this.getSnapPoints(pos)
+
+    ctx.fillStyle = SNAP_POINT_COLOR;
+    ctx.lineWidth = 4
+    ctx.fillRect(
+      points[0].x - (SNAP_POINT_SIZE / 2),  
+      points[0].y - (SNAP_POINT_SIZE / 2),  
+      SNAP_POINT_SIZE, 
+      SNAP_POINT_SIZE)
+    ctx.fillRect(
+      points[1].x - (SNAP_POINT_SIZE / 2), 
+      points[1].y - (SNAP_POINT_SIZE / 2), 
+      SNAP_POINT_SIZE, 
+      SNAP_POINT_SIZE);
+    ctx.fillRect(
+      points[2].x - (SNAP_POINT_SIZE / 2), 
+      points[2].y - (SNAP_POINT_SIZE / 2), 
+      SNAP_POINT_SIZE, 
+      SNAP_POINT_SIZE);
+    ctx.fillRect(
+      points[3].x - (SNAP_POINT_SIZE / 2), 
+      points[3].y - (SNAP_POINT_SIZE / 2), 
+      SNAP_POINT_SIZE, 
+      SNAP_POINT_SIZE);
   }
 
-  contains(pt: Point, pos: Point): boolean {
-    const cx = pos.x + this.radius;
-    const cy = pos.y + this.radius;
-    const dx = pt.x - cx;
-    const dy = pt.y - cy;
+  getSnapPoints(pos: Point): Point[] {
+    return [
+      { x: pos.x + (this.width / 2), y: pos.y + this.height },
+      { x: pos.x + this.width, y: pos.y + (this.height / 2) },
+      { x: pos.x + (this.width / 2), y: pos.y },
+      { x: pos.x, y: pos.y + (this.height / 2) },
+    ]
+  }
+
+  contains(point: Point, shapeAnchor: Point): boolean {
+    const cx = shapeAnchor.x + this.radius;
+    const cy = shapeAnchor.y + this.radius;
+    const dx = point.x - cx;
+    const dy = point.y - cy;
 
     return dx * dx + dy * dy <= this.radius * this.radius;
   }

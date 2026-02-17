@@ -1,4 +1,4 @@
-import { Arrow, CanvasObject, Rectangle, Square } from "./shapes/shapes";
+import { Arrow, CanvasObject, Circle, Rectangle, Square } from "./shapes/shapes";
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
@@ -11,13 +11,18 @@ export const state: CanvasObject[] = [
   },
   {
     id: "blue->red",
-    position: { x: 75, y: 100 },
-    shape: new Arrow({ x: 50, y: 50 }, { x: 75, y: 150 }, "#ffffff")
+    position: null!,
+    shape: new Arrow({ x: 75, y: 100 }, { x: 75, y: 150 }, "#ffffff")
   },
   {
     id: "red",
     position: { x: 50, y: 150 },
     shape: new Rectangle(50, 50, "#ff0000")
+  },
+  {
+    id: "test",
+    position: { x: 150, y: 150 },
+    shape: new Circle(50, "#ff0000")
   }
 ]
 
