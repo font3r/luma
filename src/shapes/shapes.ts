@@ -6,7 +6,6 @@ export type CanvasObject = {
   id: string;
   position: Point;
   shape: Shape;
-  snappingPoints?: Point[];
 }
 
 export function isPointInObject(point: Point, obj: CanvasObject): boolean {
