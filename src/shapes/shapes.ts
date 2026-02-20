@@ -127,11 +127,14 @@ export class Arrow extends Shape {
     const dx = x2 - x1;
     const dy = y2 - y1;
     const len2 = dx * dx + dy * dy;
-    const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / len2));
+    const t = len2 === 0 
+      ? 0 
+      : Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / len2));
     const closestX = x1 + t * dx;
     const closestY = y1 + t * dy;
     const distX = x - closestX;
     const distY = y - closestY;
+
     return distX * distX + distY * distY <= padding * padding;
   }
 }

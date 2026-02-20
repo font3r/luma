@@ -1,59 +1,22 @@
-import { animate, resizeCanvas, state } from "./canvas";
-import { CanvasObject, isPointInObject, Point } from "./shapes/shapes";
+import { addObject, } from "./canvas";
+import { Arrow, Rectangle } from "./shapes/shapes";
 
 function init(): void {
-  const canvas = document.getElementById("main-canvas") as HTMLCanvasElement;
-  const ctx = canvas.getContext("2d")!;
-
-  if (!ctx) {
-    throw new Error("ctx not found")
-  }
-
-  resizeCanvas(canvas)
-
-  let selectedObject: CanvasObject | null = null;
-  let dragOffset: Point | null = null;
-
-  canvas.addEventListener("mousedown", (e: MouseEvent) => {
-    const clickPos: Point = { x: e.clientX, y: e.clientY };
-
-    for (let i = 0; i < state.length; i++) {
-      if (isPointInObject(clickPos, state[i])) {
-        selectedObject = state[i];
-        console.log("selected object: ", selectedObject)
-
-        // Difference between obj top-left corner and cursor pos
-        dragOffset = { 
-          x: clickPos.x - selectedObject.position.x, 
-          y: clickPos.y - selectedObject.position.y 
-        };
-
-        break;
-      }
-    }
-  });
-
-  canvas.addEventListener("mouseup", () => {
-    if (selectedObject) {
-      selectedObject = null;
-      dragOffset = null;
-    }
-  });
-
-  canvas.addEventListener("mousemove", (e: MouseEvent) => {
-    if (selectedObject) {
-      const cursonPos: Point = { x: e.clientX, y: e.clientY };
-
-      if (dragOffset) {
-        selectedObject.position = {
-          x: cursonPos.x - dragOffset.x,
-          y: cursonPos.y - dragOffset.y
-        };
-      }
-    }
-  });
-
-  animate(ctx);
+  addObject({ 
+    id: "blue", 
+    position: { x: 50, y: 50 },
+    shape: new Rectangle(50, 50, "#0400ff") 
+  })
+  addObject({ 
+    id: "red", 
+    position: { x: 50, y: 150 }, 
+    shape: new Rectangle(50, 50, "#ff0000") 
+  })
+  addObject({ 
+    id: "blue->red", 
+    position: null!, 
+    shape: new Arrow({ x: 75, y: 100 }, { x: 75, y: 150 }, "#ffffff") 
+  })
 };
 
 init()

@@ -1,42 +1,82 @@
-import { Arrow, CanvasObject, Circle, Rectangle, Square } from "./shapes/shapes";
+import { CanvasObject, isPointInObject, Point } from "./shapes/shapes";
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
 
-export const state: CanvasObject[] = [
-  {
-    id: "blue",
-    position: { x: 50, y: 50 },
-    shape: new Rectangle(50, 50, "#0400ff")
-  },
-  {
-    id: "blue->red",
-    position: null!,
-    shape: new Arrow({ x: 75, y: 100 }, { x: 75, y: 150 }, "#ffffff")
-  },
-  {
-    id: "red",
-    position: { x: 50, y: 150 },
-    shape: new Rectangle(50, 50, "#ff0000")
-  },
-  {
-    id: "test",
-    position: { x: 150, y: 150 },
-    shape: new Circle(50, "#ff0000")
+const canvas = document.getElementById("main-canvas") as HTMLCanvasElement;
+const ctx = canvas.getContext("2d")!;
+
+const state: CanvasObject[] = [];
+
+(function createCanvas() {
+  if (!ctx) {
+    throw new Error("ctx not found")
   }
-]
+
+  resizeCanvas(canvas)
+  registerMovingCapabilities()
+  animateLoop(ctx)
+})()
+
+export function addObject(object: CanvasObject): void {
+  state.push(object)
+}
 
 export function resizeCanvas(canvas: HTMLCanvasElement): void {
   canvas.width = WIDTH
   canvas.height = HEIGHT
 }
 
-export function animate(ctx: CanvasRenderingContext2D): void {
+let selectedObject: CanvasObject | null = null;
+let dragOffset: Point | null = null;
+
+function registerMovingCapabilities() {
+  canvas.addEventListener("mousedown", (e: MouseEvent) => {
+    const clickPos: Point = { x: e.clientX, y: e.clientY };
+
+    for (let i = 0; i < state.length; i++) {
+      if (isPointInObject(clickPos, state[i])) {
+        selectedObject = state[i];
+        console.log("selected object: ", selectedObject)
+
+        // Difference between obj top-left corner and cursor pos
+        dragOffset = { 
+          x: clickPos.x - selectedObject.position.x, 
+          y: clickPos.y - selectedObject.position.y 
+        };
+
+        break;
+      }
+    }
+  });
+
+  canvas.addEventListener("mouseup", () => {
+    if (selectedObject) {
+      selectedObject = null;
+      dragOffset = null;
+    }
+  });
+
+  canvas.addEventListener("mousemove", (e: MouseEvent) => {
+    if (selectedObject) {
+      const cursonPos: Point = { x: e.clientX, y: e.clientY };
+
+      if (dragOffset) {
+        selectedObject.position = {
+          x: cursonPos.x - dragOffset.x,
+          y: cursonPos.y - dragOffset.y
+        };
+      }
+    }
+  });
+}
+
+export function animateLoop(ctx: CanvasRenderingContext2D): void {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   state.forEach(obj => {
     obj.shape.draw(ctx, obj.position)
     obj.shape.drawSnappingPoints(ctx, obj.position)
   })
   
-  requestAnimationFrame(() => animate(ctx));
+  requestAnimationFrame(() => animateLoop(ctx));
 }
