@@ -1,4 +1,4 @@
-import { CanvasObject, isPointInObject, Point, Arrow } from "./shapes/shapes";
+import { CanvasObject, isPointInObject, Point, Arrow, SnapPoint } from "./shapes/shapes";
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
@@ -24,13 +24,15 @@ export function addObject(object: CanvasObject): CanvasObject {
   return object;
 }
 
-export function connectObjects(source: CanvasObject, destination: CanvasObject): void {
-  let x = addObject({ 
+export function connectObjects(source: CanvasObject, sourceSp: SnapPoint, 
+  destination: CanvasObject, destinationSp: SnapPoint): void {
+  
+    let x = addObject({ 
     id: `${source.id}->${destination.id}`, 
     position: null!,
     shape: new Arrow(
-      source.shape.getSnapPoints(source.position)[0], // specific sp should be taken from cursor placement
-      destination.shape.getSnapPoints(destination.position)[2], 
+      source.shape.getSnapPoints(source.position)[sourceSp], 
+      destination.shape.getSnapPoints(destination.position)[destinationSp], 
       "#ffffff") 
   })
 

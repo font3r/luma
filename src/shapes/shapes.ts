@@ -1,5 +1,9 @@
 export type HexColor = `#${string}`
 
+export type SnapPoint = 0 | 1 | 2 | 3;
+export const BOTTOM: SnapPoint = 0, RIGHT: SnapPoint = 1, 
+  TOP: SnapPoint = 2, LEFT: SnapPoint = 3;
+
 export type Point = { x: number; y: number }
 
 export type CanvasObject = {
@@ -12,7 +16,7 @@ export function isPointInObject(point: Point, obj: CanvasObject): boolean {
   return obj.shape.contains(point, obj.position);
 }
 
-const SNAP_POINT_SIZE = 10;
+const SNAP_POINT_SIZE = 8;
 const SNAP_POINT_COLOR: HexColor = "#adadad63";
 
 export abstract class Shape {
