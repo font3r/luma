@@ -12,6 +12,12 @@ export type CanvasObject = {
   shape: Shape;
 }
 
+export type Connection = {
+  sourceObject: CanvasObject; 
+  sourceSnapPoint: SnapPoint; 
+  cursorPosition: Point
+}
+
 export function isPointInObject(point: Point, obj: CanvasObject): boolean {
   return obj.shape.contains(point, obj.position);
 }
@@ -110,7 +116,7 @@ export class Arrow extends Shape {
     this.to = to;
   }
 
-  draw(ctx: CanvasRenderingContext2D): void {
+  draw(ctx: CanvasRenderingContext2D, _pos: Point): void {
     ctx.beginPath();
     ctx.moveTo(this.from.x, this.from.y);
     ctx.lineTo(this.to.x, this.to.y);
@@ -118,8 +124,7 @@ export class Arrow extends Shape {
     ctx.stroke();
   }
 
-  drawSnappingPoints(ctx: CanvasRenderingContext2D): void {
-    
+  drawSnappingPoints(ctx: CanvasRenderingContext2D, _pos: Point): void {
   }
 
   contains(point: Point, shapeAnchor: Point): boolean {
