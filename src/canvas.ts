@@ -32,8 +32,7 @@ export function connectObjects(source: CanvasObject, sourceSp: SnapPoint,
     position: null!,
     shape: new Arrow(
       source.shape.getSnapPoints(source.position)[sourceSp], 
-      destination.shape.getSnapPoints(destination.position)[destinationSp], 
-      "#ffffff") 
+      destination.shape.getSnapPoints(destination.position)[destinationSp]) 
   })
 
   console.log(x)
@@ -64,13 +63,6 @@ function registerMovingCapabilities() {
 
         break;
       }
-    }
-  });
-
-  canvas.addEventListener("mouseup", () => {
-    if (selectedObject) {
-      selectedObject = null;
-      dragOffset = null;
     }
   });
 
@@ -105,6 +97,13 @@ function registerMovingCapabilities() {
         }
       }
     });
+  });
+
+  canvas.addEventListener("mouseup", () => {
+    if (selectedObject) {
+      selectedObject = null;
+      dragOffset = null;
+    }
   });
 }
 

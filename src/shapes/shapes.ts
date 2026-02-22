@@ -18,6 +18,7 @@ export function isPointInObject(point: Point, obj: CanvasObject): boolean {
 
 const SNAP_POINT_SIZE = 8;
 const SNAP_POINT_COLOR: HexColor = "#adadad63";
+const ARROW_COLOR: HexColor = "#ffffff";
 
 export abstract class Shape {
   width: number;
@@ -101,10 +102,10 @@ export class Arrow extends Shape {
   from: Point;
   to: Point;
 
-  constructor(from: Point, to: Point, backgroundColor: HexColor) {
+  constructor(from: Point, to: Point) {
     const w = Math.abs(to.x - from.x);
     const h = Math.abs(to.y - from.y);
-    super(w, h, backgroundColor)
+    super(w, h, ARROW_COLOR)
     this.from = from;
     this.to = to;
   }
